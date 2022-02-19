@@ -2,6 +2,7 @@
 import os
 import time
 
+from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -27,9 +28,28 @@ def getPlaylists(driver):
         EC.url_contains("https://open.spotify.com/playlist/")
     )
     #and now you're on the playlist page
+
+def getSongs(driver):
+    #parse the html from the playlist page
     time.sleep(1)
+    #sleep for a sec so that the page has time to load
     element = driver.find_element_by_xpath("//div[@data-testid='playlist-tracklist']")
-    print(element.get_attribute('innerHTML'))
+    soup = bs(element.get_attribute('innerHTML'),'html.parser')
+    #get the container holding all the songs
+    container = soup.contents[1].contents[1]
+    #the container holding all the songs is the 2nd child of the 2nd child of playlist tracklist
+
+    songDict = {}
+
+    for song in container.children:
+        for i in song.children:
+            #need the second iterator to go one down on the heirarchy
+
+            songdata = i.contents[1].contents[1]
+            print(songdata.text)
+
+
+
 
 
 
@@ -41,4 +61,5 @@ if __name__ == "__main__":
     runner = webdriver.Firefox()
     login(runner)
     getPlaylists(runner)
+    getSongs(runner)
     #running out of variable names here...
