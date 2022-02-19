@@ -1,2 +1,3 @@
 # Spotify_Playlist_Exporter
-A Python CLI tool to grab the songs of a Spotify playlist, then export them into a text file, or in my case, to YouTube.
+## Output Folder
+This is where all the results of your converting go. Just open up the correct text file, and BAM!, there's all your songs in a list.
