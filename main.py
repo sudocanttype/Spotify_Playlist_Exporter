@@ -3,6 +3,7 @@ import os
 import re
 import time
 
+import requests
 from bs4 import BeautifulSoup as bs
 from dotenv import load_dotenv
 from selenium import webdriver
@@ -62,7 +63,8 @@ def getSongs(driver):
             #need the second iterator to go one down on the heirarchy
 
             songdata = i.contents[1].contents[1].text
-            file.write(songdata+"\n")
+            link = getYoutubeVideoLink(songdata+" lyrics")
+            file.write(link+"\n")
             p += deltap
             print(f'{p}% Completed.')
             #lazy workoutaround that might just work for now
@@ -70,10 +72,23 @@ def getSongs(driver):
     file.close()
 
 
-def getYoutubeVideo(key):
+def getYoutubeVideoLink(search):
     #https://youtube.googleapis.com/youtube/v3/search?maxResults=1&q=Space%20Oddity%20-%202015%20RemasterDavid%20Bowie%20lyrics&key=[API_KEY_HERE]
+    key = os.getenv("YOUTUBE_API_KEY")
     maxResults=1
-    base = f"https://youtube.googleapis.com/youtube/v3/search?maxResults={maxResults}&key={key}"
+    link = f"https://youtube.googleapis.com/youtube/v3/search?maxResults={maxResults}&key={key}&q={search}"
+    r = requests.get(link)
+    #standard requests stuff
+    assert(r.status_code == 200), "Could not connect to Youtube API"
+    #ensure that we can actually use this search
+
+    print("Connected Successfully")
+    videoid = r.json()['items'][0]['id']["videoId"]
+    #calling api returns a json dict that i have to manipulate
+    link = "https://www.youtube.com/watch?v="+videoid
+
+    return link
+
 
 
 
@@ -82,7 +97,6 @@ def getYoutubeVideo(key):
 if __name__ == "__main__":
     current = os.getcwd()+"/dp"
     load_dotenv()
-    api_key = os.getenv("YOUTUBE_API_KEY")
 
     os.environ['PATH'] += ':'+current
     #shitty nightmare way to make sure that selenium has its geckodriver
