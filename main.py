@@ -4,6 +4,7 @@ import re
 import time
 
 from bs4 import BeautifulSoup as bs
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -66,6 +67,13 @@ def getSongs(driver):
             print(f'{p}% Completed.')
             #lazy workoutaround that might just work for now
     print("Done writing to file")
+    file.close()
+
+
+def getYoutubeVideo(key):
+    #https://youtube.googleapis.com/youtube/v3/search?maxResults=1&q=Space%20Oddity%20-%202015%20RemasterDavid%20Bowie%20lyrics&key=[API_KEY_HERE]
+    maxResults=1
+    base = f"https://youtube.googleapis.com/youtube/v3/search?maxResults={maxResults}&key={key}"
 
 
 
@@ -73,6 +81,8 @@ def getSongs(driver):
 
 if __name__ == "__main__":
     current = os.getcwd()+"/dp"
+    load_dotenv()
+    api_key = os.getenv("YOUTUBE_API_KEY")
 
     os.environ['PATH'] += ':'+current
     #shitty nightmare way to make sure that selenium has its geckodriver
