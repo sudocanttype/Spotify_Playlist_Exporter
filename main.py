@@ -38,7 +38,7 @@ def getSongs(driver):
     #set name of file
     name = driver.find_element_by_xpath("//h1").text
     #run it through to remove any interesting things
-    rx = re.compile('\W+')
+    rx = re.compile(r'\W+')
     name = rx.sub('_',name).strip()
     file = open(f"output/{name}.txt", "w")
 
@@ -50,7 +50,6 @@ def getSongs(driver):
     container = soup.contents[1].contents[1]
     #the container holding all the songs is the 2nd child of the 2nd child of playlist tracklist
 
-    songDict = {}
 
     #loading percentage
     p = 0
