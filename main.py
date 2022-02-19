@@ -47,6 +47,7 @@ def getSongs(driver):
 
             songdata = i.contents[1].contents[1]
             print(songdata.text)
+            #lazy workoutaround that might just work for now
 
 
 
