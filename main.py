@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3
 import os
+import re
 import time
 
 from bs4 import BeautifulSoup as bs
@@ -28,10 +29,20 @@ def getPlaylists(driver):
         EC.url_contains("https://open.spotify.com/playlist/")
     )
     #and now you're on the playlist page
+    time.sleep(1)
 
 def getSongs(driver):
     #parse the html from the playlist page
     time.sleep(1)
+
+    #set name of file
+    name = driver.find_element_by_xpath("//h1").text
+    #run it through to remove any interesting things
+    rx = re.compile('\W+')
+    name = rx.sub('_',name).strip()
+    file = open(f"output/{name}.txt", "w")
+
+
     #sleep for a sec so that the page has time to load
     element = driver.find_element_by_xpath("//div[@data-testid='playlist-tracklist']")
     soup = bs(element.get_attribute('innerHTML'),'html.parser')
@@ -45,8 +56,8 @@ def getSongs(driver):
         for i in song.children:
             #need the second iterator to go one down on the heirarchy
 
-            songdata = i.contents[1].contents[1]
-            print(songdata.text)
+            songdata = i.contents[1].contents[1].text
+            file.write(songdata+"\n")
             #lazy workoutaround that might just work for now
 
 
