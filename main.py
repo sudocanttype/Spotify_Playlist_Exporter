@@ -52,14 +52,21 @@ def getSongs(driver):
 
     songDict = {}
 
+    #loading percentage
+    p = 0
+    deltap = int(100/len( container.find_all(recursive=False)))
+    print("Beginning write to file")
+
     for song in container.children:
         for i in song.children:
             #need the second iterator to go one down on the heirarchy
 
             songdata = i.contents[1].contents[1].text
             file.write(songdata+"\n")
+            p += deltap
+            print(f'{p}% Completed.')
             #lazy workoutaround that might just work for now
-
+    print("Done writing to file")
 
 
 
