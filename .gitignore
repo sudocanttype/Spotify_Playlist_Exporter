@@ -3,6 +3,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+#ignore json client secrets
+*.googleusercontent.com.json
 
 # C extensions
 *.so

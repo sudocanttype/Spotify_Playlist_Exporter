@@ -89,6 +89,20 @@ def getYoutubeVideoLink(search):
 
     return link
 
+def addSongToYoutubePlaylist(songLink):
+    link = songLink[32:]
+    # curl --request POST \
+  # 'https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=[YOUR_API_KEY]' \
+  # --header 'Authorization: Bearer [YOUR_ACCESS_TOKEN]' \
+  # --header 'Accept: application/json' \
+  # --header 'Content-Type: application/json' \
+  # --data '{"snippet":{"playlistId":"[PLAYLIST]","resourceId":{"videoId":"dyyD6NkHOoM","kind":"youtube#video"}}}' \
+  # --compressed
+  # part snippet-> playlistid, resourceid-> kind,videoid
+
+
+
+
 
 
 
