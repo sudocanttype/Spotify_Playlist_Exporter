@@ -22,7 +22,7 @@ def login(driver):
     WebDriverWait(driver, 1000000).until(
         EC.url_matches("https://open.spotify.com/")
     )
-    # getPlaylists(driver)
+    getPlaylists(driver)
     #await the login or throw timeout error
     #and now you're logged in!
 
@@ -106,10 +106,10 @@ def getGoogleCredentials():
 
     return credentials
 
-def addSongToYoutubePlaylist(songLink, playlistid):
+def addSongToYoutubePlaylist(songLink, playlistid, credentials):
+    #pass in the link of the song, the playlist id, and credentials
     videoId = songLink[32:]
 
-    credentials = getGoogleCredentials()
     api_service_name = "youtube"
     api_version = "v3"
     youtube = googleapiclient.discovery.build(
@@ -133,6 +133,20 @@ def addSongToYoutubePlaylist(songLink, playlistid):
     print(response)
     # part snippet-> playlistid, resourceid-> kind,videoid
 
+def createYoutubePlaylist(name, credentials):
+    youtube = googleapiclient.discovery.build("youtube", "v3", credentials=credentials)
+    request = youtube.playlists().insert(
+        part="snippet",
+        body={
+          "snippet": {
+            "title": name
+          }
+        }
+    )
+    request.execute()
+
+    print(f'Successfully created playlist {name}')
+
 
 
 
@@ -153,3 +167,8 @@ if __name__ == "__main__":
     getPlaylists(runner)
     getSongs(runner)
     #running out of variable names here...
+    creds = getGoogleCredentials()
+    createYoutubePlaylist(str(input("Name your new playlist:")), creds)
+    # with open('topology_list.txt') as list:
+    #     for line in topo_file:
+    #         print(line)
