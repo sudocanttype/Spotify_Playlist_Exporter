@@ -3,6 +3,9 @@ import os
 import re
 import time
 
+import google_auth_oauthlib.flow
+import googleapiclient.discovery
+import googleapiclient.errors
 import requests
 from bs4 import BeautifulSoup as bs
 from dotenv import load_dotenv
@@ -89,16 +92,47 @@ def getYoutubeVideoLink(search):
 
     return link
 
-def addSongToYoutubePlaylist(songLink):
-    link = songLink[32:]
-    # curl --request POST \
-  # 'https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=[YOUR_API_KEY]' \
-  # --header 'Authorization: Bearer [YOUR_ACCESS_TOKEN]' \
-  # --header 'Accept: application/json' \
-  # --header 'Content-Type: application/json' \
-  # --data '{"snippet":{"playlistId":"[PLAYLIST]","resourceId":{"videoId":"dyyD6NkHOoM","kind":"youtube#video"}}}' \
-  # --compressed
-  # part snippet-> playlistid, resourceid-> kind,videoid
+def getGoogleCredentials():
+    #should prob implement a way to set the client_secrets_file
+    client_secrets_file = "client_secret.apps.googleusercontent.com.json"
+
+    #apparently i should remove this in prod?
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+    #should prob implement a way to set and change scopes
+    scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
+    flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(client_secrets_file, scopes)
+    credentials = flow.run_console()
+
+    return credentials
+
+def addSongToYoutubePlaylist(songLink, playlistid):
+    videoId = songLink[32:]
+
+    credentials = getGoogleCredentials()
+    api_service_name = "youtube"
+    api_version = "v3"
+    youtube = googleapiclient.discovery.build(
+        api_service_name, api_version, credentials=credentials)
+
+    #idk what this really does, copied from dev google
+
+    request = youtube.playlistItems().insert(
+        part="snippet",
+        body={
+          "snippet": {
+            "playlistId": playlistid,
+            "resourceId": {
+              "kind": "youtube#video",
+              "videoId": videoId
+            }
+          }
+        }
+    )
+    response = request.execute()
+    print(response)
+    # part snippet-> playlistid, resourceid-> kind,videoid
+
 
 
 
