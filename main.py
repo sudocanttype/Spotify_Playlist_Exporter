@@ -109,6 +109,7 @@ def getGoogleCredentials():
 def addSongToYoutubePlaylist(songLink, playlistid, credentials):
     #pass in the link of the song, the playlist id, and credentials
     videoId = songLink[32:]
+    print(videoId)
 
     api_service_name = "youtube"
     api_version = "v3"
@@ -147,6 +148,19 @@ def createYoutubePlaylist(name, credentials):
 
     print(f'Successfully created playlist {name}')
 
+def addFileListToYoutubePlaylist(playlistFileName, playlistid, credentials):
+    failures = []
+    with open('output/'+playlistFileName) as lmao:
+        for line in lmao:
+            line = line[0:len(line)-1]
+            #uhhhhh i dont know why this works but okay we take those
+            try:
+                addSongToYoutubePlaylist(line, playlistid, credentials)
+            except:
+                failures.append(line)
+            print(f'added {line} to playlist')
+    print(failures)
+
 
 
 
@@ -166,9 +180,8 @@ if __name__ == "__main__":
     login(runner)
     getPlaylists(runner)
     getSongs(runner)
+
     #running out of variable names here...
-    creds = getGoogleCredentials()
-    createYoutubePlaylist(str(input("Name your new playlist:")), creds)
-    # with open('topology_list.txt') as list:
-    #     for line in topo_file:
-    #         print(line)
+    # creds = getGoogleCredentials()
+
+    # createYoutubePlaylist(str(input("Name your new playlist:")), creds)
