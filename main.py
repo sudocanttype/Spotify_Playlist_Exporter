@@ -174,6 +174,10 @@ if __name__ == "__main__":
     current = os.getcwd()+"/dp"
     load_dotenv()
 
+    creds = getGoogleCredentials()
+    name = str(input("Name a new playlist:"))
+    createYoutubePlaylist(name, creds)
+
     os.environ['PATH'] += ':'+current
     #shitty nightmare way to make sure that selenium has its geckodriver
     runner = webdriver.Firefox()
@@ -182,6 +186,5 @@ if __name__ == "__main__":
     getSongs(runner)
 
     #running out of variable names here...
-    # creds = getGoogleCredentials()
 
     # createYoutubePlaylist(str(input("Name your new playlist:")), creds)
