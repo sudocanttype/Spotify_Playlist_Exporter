@@ -10,7 +10,7 @@ A Python CLI tool to scrape the songs of a Spotify playlist, then export them in
 ## Installation and Prerequisites
 *THIS GUIDE ONLY APPLIES TO LINUX/GNU OPERATING SYSTEMS*
 <br>
-To download, run `git clone https://github.com/sudocanttype/Spotify_Playlist_Exporter.git && cd Spotify_Playlist_Exporter`
+Firstly, to download, run `git clone https://github.com/sudocanttype/Spotify_Playlist_Exporter.git && cd Spotify_Playlist_Exporter`
 <br>
 Then, install the necessary libraries by running `pip3 install -r requirements.txt`.
 ### YouTube Compatibility
