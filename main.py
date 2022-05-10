@@ -37,7 +37,7 @@ def get_playlists_from_spotify(driver):
     time.sleep(1)
 
 def parse_songs_from_spotify(driver):
-    #parse the html from the playlist page
+    #parse the html from selenium html, returns a list
     time.sleep(1)
 
     #set name of file
@@ -66,8 +66,8 @@ def parse_songs_from_spotify(driver):
             #need the second iterator to go one down on the heirarchy
 
             songdata = i.contents[1].contents[1].text
-            songlength = i.contents[4].contents[1].text
-            link = getYoutubeVideoLink(songdata+" lyrics")
+            # songlength = i.contents[4].contents[1].text
+            link = get_youtube_link(songdata+" lyrics")
             file.write(link+"\n")
             p += deltap
             print(f'{p}% Completed.')
@@ -75,7 +75,10 @@ def parse_songs_from_spotify(driver):
     print("Done writing to file")
     file.close()
 
-def getGoogleCredentials():
+# def write_songs_to_file():
+
+
+def google_oauth_login():
     #should prob implement a way to set the client_secrets_file
     client_secrets_file = "client_secret.apps.googleusercontent.com.json"
 
@@ -89,7 +92,7 @@ def getGoogleCredentials():
 
     return credentials
 
-def getYoutubeVideoLink(search):
+def get_youtube_link(search):
     #https://youtube.googleapis.com/youtube/v3/search?maxResults=1&q=Space%20Oddity%20-%202015%20RemasterDavid%20Bowie%20lyrics&key=[API_KEY_HERE]
     key = os.getenv("YOUTUBE_API_KEY")
     maxResults=1
@@ -134,7 +137,7 @@ def addSongToYoutubePlaylist(songLink, playlistid, credentials):
     print(response)
     # part snippet-> playlistid, resourceid-> kind,videoid
 
-def createYoutubePlaylist(name, credentials):
+def create_youtube_playlist(name, credentials):
     youtube = googleapiclient.discovery.build("youtube", "v3", credentials=credentials)
     request = youtube.playlists().insert(
         part="snippet",
@@ -148,7 +151,7 @@ def createYoutubePlaylist(name, credentials):
 
     print(f'Successfully created playlist {name}')
 
-def addFileListToYoutubePlaylist(playlistFileName, playlistid, credentials):
+def export_file_to_playlist(playlistFileName, playlistid, credentials):
     failures = []
     with open('output/'+playlistFileName) as lmao:
         for line in lmao:
@@ -174,7 +177,7 @@ if __name__ == "__main__":
     current = os.getcwd()+"/dp"
     load_dotenv()
 
-    creds = getGoogleCredentials()
+    creds = google_oauth_login()
     name = str(input("Name a new playlist:"))
     createYoutubePlaylist(name, creds)
 
