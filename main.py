@@ -18,13 +18,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 def login_to_spotify(driver):
 
     driver.get("https://accounts.spotify.com/en/login?continue=https%3A%2F%2Fopen.spotify.com%2F")
+    #this link ensures you end up on web client
     print("Please insert your credentials and login.")
     WebDriverWait(driver, 1000000).until(
+        #await spotify homepage
         EC.url_matches("https://open.spotify.com/")
     )
     get_playlists_from_spotify(driver)
-    #await the login or throw timeout error
-    #and now you're logged in!
 
 def get_playlists_from_spotify(driver):
     #assumes you are already logged in
@@ -177,9 +177,9 @@ if __name__ == "__main__":
     current = os.getcwd()+"/dp"
     load_dotenv()
 
-    creds = google_oauth_login()
-    name = str(input("Name a new playlist:"))
-    createYoutubePlaylist(name, creds)
+    # creds = google_oauth_login()
+    # name = str(input("Name a new playlist:"))
+    # createYoutubePlaylist(name, creds)
 
     os.environ['PATH'] += ':'+current
     #shitty nightmare way to make sure that selenium has its geckodriver
