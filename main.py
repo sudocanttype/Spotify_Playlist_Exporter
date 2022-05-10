@@ -15,18 +15,18 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-def login(driver):
+def login_to_spotify(driver):
 
     driver.get("https://accounts.spotify.com/en/login?continue=https%3A%2F%2Fopen.spotify.com%2F")
     print("Please insert your credentials and login.")
     WebDriverWait(driver, 1000000).until(
         EC.url_matches("https://open.spotify.com/")
     )
-    getPlaylists(driver)
+    get_playlists_from_spotify(driver)
     #await the login or throw timeout error
     #and now you're logged in!
 
-def getPlaylists(driver):
+def get_playlists_from_spotify(driver):
     #assumes you are already logged in
     driver.get("https://open.spotify.com/collection/playlists")
     print("Select a playlist from the screen")
@@ -36,7 +36,7 @@ def getPlaylists(driver):
     #and now you're on the playlist page
     time.sleep(1)
 
-def getSongs(driver):
+def parse_songs_from_spotify(driver):
     #parse the html from the playlist page
     time.sleep(1)
 
@@ -66,6 +66,7 @@ def getSongs(driver):
             #need the second iterator to go one down on the heirarchy
 
             songdata = i.contents[1].contents[1].text
+            songlength = i.contents[4].contents[1].text
             link = getYoutubeVideoLink(songdata+" lyrics")
             file.write(link+"\n")
             p += deltap
@@ -74,6 +75,19 @@ def getSongs(driver):
     print("Done writing to file")
     file.close()
 
+def getGoogleCredentials():
+    #should prob implement a way to set the client_secrets_file
+    client_secrets_file = "client_secret.apps.googleusercontent.com.json"
+
+    #apparently i should remove this in prod?
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+    #should prob implement a way to set and change scopes
+    scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
+    flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(client_secrets_file, scopes)
+    credentials = flow.run_console()
+
+    return credentials
 
 def getYoutubeVideoLink(search):
     #https://youtube.googleapis.com/youtube/v3/search?maxResults=1&q=Space%20Oddity%20-%202015%20RemasterDavid%20Bowie%20lyrics&key=[API_KEY_HERE]
@@ -91,20 +105,6 @@ def getYoutubeVideoLink(search):
     link = "https://www.youtube.com/watch?v="+videoid
 
     return link
-
-def getGoogleCredentials():
-    #should prob implement a way to set the client_secrets_file
-    client_secrets_file = "client_secret.apps.googleusercontent.com.json"
-
-    #apparently i should remove this in prod?
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-
-    #should prob implement a way to set and change scopes
-    scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
-    flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(client_secrets_file, scopes)
-    credentials = flow.run_console()
-
-    return credentials
 
 def addSongToYoutubePlaylist(songLink, playlistid, credentials):
     #pass in the link of the song, the playlist id, and credentials
@@ -181,9 +181,9 @@ if __name__ == "__main__":
     os.environ['PATH'] += ':'+current
     #shitty nightmare way to make sure that selenium has its geckodriver
     runner = webdriver.Firefox()
-    login(runner)
-    getPlaylists(runner)
-    getSongs(runner)
+    login_to_spotify(runner)
+    get_playlists_from_spotify(runner)
+    parse_songs_from_spotify(runner)
 
     #running out of variable names here...
 
