@@ -37,46 +37,49 @@ def get_playlists_from_spotify(driver):
     time.sleep(1)
 
 def parse_songs_from_spotify(driver):
-    #parse the html from selenium html, returns a list
+    #parse the html from selenium html, returns a list of all the songs
     time.sleep(1)
-
-    #set name of file
-    name = driver.find_element_by_xpath("//h1").text
-    #run it through to remove any interesting things
-    rx = re.compile(r'\W+')
-    name = rx.sub('_',name).strip()
-    file = open(f"output/{name}.txt", "w")
-
-
     #sleep for a sec so that the page has time to load
+    songs = []
+
     element = driver.find_element_by_xpath("//div[@data-testid='playlist-tracklist']")
     soup = bs(element.get_attribute('innerHTML'),'html.parser')
     #get the container holding all the songs
     container = soup.contents[1].contents[1]
     #the container holding all the songs is the 2nd child of the 2nd child of playlist tracklist
 
-
     #loading percentage
     p = 0
     deltap = int(100/len( container.find_all(recursive=False)))
-    print("Beginning write to file")
+    print("Retrieving songs:")
 
     for song in container.children:
         for i in song.children:
             #need the second iterator to go one down on the heirarchy
 
             songdata = i.contents[1].contents[1].text
-            # songlength = i.contents[4].contents[1].text
-            link = get_youtube_link(songdata+" lyrics")
-            file.write(link+"\n")
+            songs.append(songdata)
             p += deltap
             print(f'{p}% Completed.')
             #lazy workoutaround that might just work for now
-    print("Done writing to file")
+    print("Songs retrieved.")
+
+    return songs
+
+def write_songs_to_file(driver, song_list):
+    #set name of file
+    name = driver.find_element_by_xpath("//h1").text
+    #run it through to remove any interesting things
+    rx = re.compile(r'\W+')
+    name = rx.sub('_',name).strip()
+
+    file = open(f"output/{name}.txt", "w")
+    print("Beginning write to file")
+
+    for i in song_list:
+        file.write(link+"\n")
+
     file.close()
-
-# def write_songs_to_file():
-
 
 def google_oauth_login():
     #should prob implement a way to set the client_secrets_file
