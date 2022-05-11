@@ -50,7 +50,7 @@ def parse_songs_from_spotify(driver):
 
     #loading percentage
     p = 0
-    deltap = int(100/len( container.find_all(recursive=False)))
+    deltap = int(100/len(container.find_all(recursive=False)))
     print("Retrieving songs:")
 
     for song in container.children:
@@ -65,6 +65,14 @@ def parse_songs_from_spotify(driver):
     print("Songs retrieved.")
 
     return songs
+
+def get_song_links(song_list):
+    res = []
+
+    for i in song_list():
+        res.append(get_youtube_link(i+" lyrics"))
+
+    return res
 
 def write_songs_to_file(driver, song_list):
     #set name of file
