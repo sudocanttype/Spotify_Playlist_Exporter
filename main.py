@@ -175,15 +175,6 @@ def export_file_to_playlist(playlistFileName, playlistid, credentials):
             print(f'added {line} to playlist')
     print(failures)
 
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
     current = os.getcwd()+"/dp"
     load_dotenv()
@@ -194,10 +185,10 @@ if __name__ == "__main__":
 
     os.environ['PATH'] += ':'+current
     #shitty nightmare way to make sure that selenium has its geckodriver
-    runner = webdriver.Firefox()
-    login_to_spotify(runner)
-    get_playlists_from_spotify(runner)
-    parse_songs_from_spotify(runner)
+    driver = webdriver.Firefox()
+    login_to_spotify(driver)
+    get_playlists_from_spotify(driver)
+    parse_songs_from_spotify(driver)
 
     #running out of variable names here...
 
