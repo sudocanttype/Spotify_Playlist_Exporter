@@ -2,6 +2,7 @@
 import os
 import re
 import time
+import argparse
 
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
@@ -174,6 +175,9 @@ def export_file_to_playlist(playlistFileName, playlistid, credentials):
                 failures.append(line)
             print(f'added {line} to playlist')
     print(failures)
+
+def parse_cli_input():
+    parser = argparse.ArgumentParser(description='Scrape the songs of a Spotify playlist, then export them into a text file, or to YouTube.')
 
 if __name__ == "__main__":
     current = os.getcwd()+"/dp"
