@@ -178,11 +178,15 @@ def export_file_to_playlist(playlistFileName, playlistid, credentials):
 
 def parse_cli_input():
     parser = argparse.ArgumentParser(description='Scrape the songs of a Spotify playlist, then export them into a text file, or to YouTube.')
+    parser.add_argument('--make_new_playlist', action='store_true')
+    parser.add_argument('--add_to_playlist', action='store_true', help='')
+    parser.add_argument('--save_to_file', action='store_true', help='Default')
 
 if __name__ == "__main__":
     current = os.getcwd()+"/dp"
     load_dotenv()
 
+    parse_cli_input()
     # creds = google_oauth_login()
     # name = str(input("Name a new playlist:"))
     # createYoutubePlaylist(name, creds)
