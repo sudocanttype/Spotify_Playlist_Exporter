@@ -71,7 +71,7 @@ def get_song_links(song_list):
     res = []
 
     for i in song_list():
-        res.append(get_youtube_link(i+" lyrics"))
+        res.append(get_youtube_link(i+""))
 
     return res
 
