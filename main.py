@@ -25,52 +25,51 @@ def login_to_spotify(driver):
         #await spotify homepage
         EC.url_matches("https://open.spotify.com/")
     )
-    get_playlists_from_spotify(driver)
+    print("Logged In")
 
 def get_playlists_from_spotify(driver):
     #assumes you are already logged in
+    time.sleep(1)
     driver.get("https://open.spotify.com/collection/playlists")
     print("Select a playlist from the screen")
     WebDriverWait(driver, 1000000).until(
         EC.url_contains("https://open.spotify.com/playlist/")
     )
+    print("on playlist page")
     #and now you're on the playlist page
     time.sleep(1)
 
 def parse_songs_from_spotify(driver):
     #parse the html from selenium html, returns a list of all the songs
-    time.sleep(1)
+    time.sleep(3)
+    driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+    time.sleep(4)
     #sleep for a sec so that the page has time to load
     songs = []
 
     element = driver.find_element_by_xpath("//div[@data-testid='playlist-tracklist']")
     soup = bs(element.get_attribute('innerHTML'),'html.parser')
-    #get the container holding all the songs
+    #get the container holding all the individual song divs
     container = soup.contents[1].contents[1]
     #the container holding all the songs is the 2nd child of the 2nd child of playlist tracklist
 
-    #loading percentage
-    p = 0
-    deltap = int(100/len(container.find_all(recursive=False)))
-    print("Retrieving songs:")
+    print("Retrieving songs from Spotify...")
 
     for song in container.children:
-        for i in song.children:
-            #need the second iterator to go one down on the heirarchy
-
-            songdata = i.contents[1].contents[1].text
+            songdata = song.contents[0].contents[0].contents[0].contents[1]
+            print(songdata['aria-label'])
             songs.append(songdata)
-            p += deltap
-            print(f'{p}% Completed.')
-            #lazy workoutaround that might just work for now
-    print("Songs retrieved.")
+                #lazy workoutaround that might just work for now
+    # print("Songs retrieved.")
+    print(songs)
+    print(len(songs))
 
     return songs
 
 def get_song_links(song_list):
     res = []
 
-    for i in song_list():
+    for i in song_list:
         res.append(get_youtube_link(i+""))
 
     return res
@@ -86,9 +85,11 @@ def write_songs_to_file(driver, song_list):
     print("Beginning write to file")
 
     for i in song_list:
-        file.write(link+"\n")
+        file.write(i+"\n")
 
     file.close()
+
+    return name+".txt"
 
 def google_oauth_login():
     #should prob implement a way to set the client_secrets_file
@@ -124,7 +125,6 @@ def get_youtube_link(search):
 def addSongToYoutubePlaylist(songLink, playlistid, credentials):
     #pass in the link of the song, the playlist id, and credentials
     videoId = songLink[32:]
-    print(videoId)
 
     api_service_name = "youtube"
     api_version = "v3"
@@ -145,8 +145,9 @@ def addSongToYoutubePlaylist(songLink, playlistid, credentials):
           }
         }
     )
+    print(request)
     response = request.execute()
-    print(response)
+    print(response )
     # part snippet-> playlistid, resourceid-> kind,videoid
 
 def create_youtube_playlist(name, credentials):
@@ -171,9 +172,11 @@ def export_file_to_playlist(playlistFileName, playlistid, credentials):
             #uhhhhh i dont know why this works but okay we take those
             try:
                 addSongToYoutubePlaylist(line, playlistid, credentials)
+                print(f'added {line} to playlist')
             except:
+
                 failures.append(line)
-            print(f'added {line} to playlist')
+    print("these failed!")
     print(failures)
 
 def parse_cli_input():
@@ -196,7 +199,12 @@ if __name__ == "__main__":
     driver = webdriver.Firefox()
     login_to_spotify(driver)
     get_playlists_from_spotify(driver)
-    parse_songs_from_spotify(driver)
+    songs = parse_songs_from_spotify(driver)
+    # hi = get_song_links(songs)
+    # nm = write_songs_to_file(driver, hi)
+    # export_file_to_playlist("Running.txt", "PLNHzFFFPjobdgR58ScwWwloHDUSvDf3zz", creds)
+
+
 
     #running out of variable names here...
 
