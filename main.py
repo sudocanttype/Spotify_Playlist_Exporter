@@ -109,12 +109,11 @@ def get_youtube_link(search):
     assert(r.status_code == 200), "Could not connect to Youtube API"
     #ensure that we can actually use this search
 
-    print("Connected Successfully")
     videoid = r.json()['items'][0]['id']["videoId"]
     #calling api returns a json dict that i have to manipulate
     link = "https://www.youtube.com/watch?v="+videoid
 
-    time.sleep(1)
+    time.sleep(.25)
     #ratelimiting
 
     return link
@@ -143,9 +142,7 @@ def addSongToYoutubePlaylist(songLink, playlistid, credentials):
           }
         }
     )
-    print(request)
     response = request.execute()
-    print(response )
     # part snippet-> playlistid, resourceid-> kind,videoid
 
 def create_youtube_playlist(name, credentials):
@@ -174,7 +171,7 @@ def export_file_to_playlist(playlistFileName, playlistid, credentials):
             except:
 
                 failures.append(line)
-    print("these failed!")
+    print("these failed:")
     print(failures)
 
 def parse_cli_input():
@@ -188,18 +185,18 @@ if __name__ == "__main__":
     load_dotenv()
 
     parse_cli_input()
-    # creds = google_oauth_login()
+    creds = google_oauth_login()
     # name = str(input("Name a new playlist:"))
     # createYoutubePlaylist(name, creds)
 
     os.environ['PATH'] += ':'+current
     #shitty nightmare way to make sure that selenium has its geckodriver
-    driver = webdriver.Firefox()
-    login_to_spotify(driver)
-    get_playlists_from_spotify(driver)
-    songs = parse_songs_from_spotify(driver)
-    nm = write_songs_to_file(driver, get_song_links(songs))
-    # export_file_to_playlist("Running.txt", "PLNHzFFFPjobdgR58ScwWwloHDUSvDf3zz", creds)
+    # driver = webdriver.Firefox()
+    # login_to_spotify(driver)
+    # get_playlists_from_spotify(driver)
+    # songs = parse_songs_from_spotify(driver)
+    # nm = write_songs_to_file(driver, get_song_links(songs))
+    export_file_to_playlist("Running.txt", "PLNHzFFFPjobdgR58ScwWwloHDUSvDf3zz", creds)
 
 
 
