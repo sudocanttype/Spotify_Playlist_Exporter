@@ -41,9 +41,7 @@ def get_playlists_from_spotify(driver):
 
 def parse_songs_from_spotify(driver):
     #parse the html from selenium html, returns a list of all the songs
-    time.sleep(3)
-    driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-    time.sleep(4)
+    input("scroll to bottom. Done?")
     #sleep for a sec so that the page has time to load
     songs = []
 
@@ -56,13 +54,9 @@ def parse_songs_from_spotify(driver):
     print("Retrieving songs from Spotify...")
 
     for song in container.children:
-            songdata = song.contents[0].contents[0].contents[0].contents[1]
-            print(songdata['aria-label'])
-            songs.append(songdata)
-                #lazy workoutaround that might just work for now
+            songdata = song.contents[0].contents[0].contents[0].contents[1]['aria-label']
+            songs.append(songdata[5:])
     # print("Songs retrieved.")
-    print(songs)
-    print(len(songs))
 
     return songs
 
@@ -120,7 +114,11 @@ def get_youtube_link(search):
     #calling api returns a json dict that i have to manipulate
     link = "https://www.youtube.com/watch?v="+videoid
 
+    time.sleep(1)
+    #ratelimiting
+
     return link
+
 
 def addSongToYoutubePlaylist(songLink, playlistid, credentials):
     #pass in the link of the song, the playlist id, and credentials
@@ -200,8 +198,7 @@ if __name__ == "__main__":
     login_to_spotify(driver)
     get_playlists_from_spotify(driver)
     songs = parse_songs_from_spotify(driver)
-    # hi = get_song_links(songs)
-    # nm = write_songs_to_file(driver, hi)
+    nm = write_songs_to_file(driver, get_song_links(songs))
     # export_file_to_playlist("Running.txt", "PLNHzFFFPjobdgR58ScwWwloHDUSvDf3zz", creds)
 
 
